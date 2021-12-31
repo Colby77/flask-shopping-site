@@ -16,6 +16,6 @@ List of users is in customers.txt
     -HTML/CSS
 
 ## Screenshots
-<img src='img/all_melons_page.png' width='500'>
-<img src='img/melon_details_page.png' width='500'>
-<img src='img/cart_page.png' width='500'>
+<img src='static/img/all_melons_page.png' width='500'>
+<img src='static/img/melon_details_page.png' width='500'>
+<img src='static/img/cart_page.png' width='500'>
