@@ -7,10 +7,11 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
 
 from re import M
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, render_template, redirect, flash, session, request
 import jinja2
 
 import melons
+from customers import *
 
 app = Flask(__name__)
 
@@ -167,7 +168,25 @@ def process_login():
     # - if they don't, flash a failure message and redirect back to "/login"
     # - do the same if a Customer with that email doesn't exist
 
-    return "Oops! This needs to be implemented"
+    email = request.form['email']
+    password = request.form['password']
+    user = get_by_email(email)
+    # print(test.fname)
+    # print(type(test))
+    if user:
+        print(user.email)
+        if password == user.password:
+            session['user'] = email
+            flash(f'Welcome, {email}', 'success')
+            return redirect('/melons')
+        else:
+            flash("Password doesn't match", 'error')
+            return redirect('/login')
+    else:
+        flash("User doesn't exist", 'error')
+        return redirect('/login')
+
+    # return email + ' ' + password
 
 
 @app.route("/checkout")
@@ -179,6 +198,13 @@ def checkout():
 
     flash("Sorry! Checkout will be implemented in a future version.")
     return redirect("/melons")
+
+
+@app.route('/logout')
+def process_logout():
+    flash('Logged out', 'success')
+    session.pop('user', None)
+    return redirect('/melons')
 
 
 if __name__ == "__main__":
