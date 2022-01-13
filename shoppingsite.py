@@ -16,16 +16,10 @@ from customers import *
 app = Flask(__name__)
 
 # A secret key is needed to use Flask sessioning features
-app.secret_key = 'what_do_you_get_when-you-eat-all-the-potatoes?123#'
+app.secret_key = 'this_is_the_secret_key'
 
-# Normally, if you refer to an undefined variable in a Jinja template,
-# Jinja silently ignores this. This makes debugging difficult, so we'll
-# set an attribute of the Jinja environment that says to make this an
-# error.
 app.jinja_env.undefined = jinja2.StrictUndefined
 
-# This configuration option makes the Flask interactive debugger
-# more useful (you should remove this line in production though)
 app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
 
 
@@ -62,40 +56,17 @@ def show_melon(melon_id):
 def show_shopping_cart():
     """Display content of shopping cart."""
 
-    #  Display the contents of the shopping cart.
-
-    # The logic here will be something like:
-    #
-    # - get the cart dictionary from the session
-    # - create a list to hold melon objects and a variable to hold the total
-    #   cost of the order
-    # - loop over the cart dictionary, and for each melon id:
-    #    - get the corresponding Melon object
-    #    - compute the total cost for that type of melon
-    #    - add this to the order total
-    #    - add quantity and total cost as attributes on the Melon object
-    #    - add the Melon object to the list created above
-    # - pass the total order cost and the list of Melon objects to the template
-    #
-    # Make sure your function can also handle the case wherein no cart has
-    # been added to the session
     melon_list = []
     order_total = 0
     if session.get('cart'):
         for melon, qty in session['cart'].items():
-            # print(melon, qty)
             m = melons.get_by_id(melon)
-            # print(m.price)
             price = m.price
             cost = qty * price
             order_total += cost
             m.quantity = qty
             m.total_cost = cost
             melon_list.append(m)
-        #     print(vars(m))
-        #     print('')
-        
-    # print(melon_list)
 
     
     return render_template("cart.html", melon_list=melon_list, order_total=order_total)
@@ -109,16 +80,6 @@ def add_to_cart(melon_id):
     page and display a confirmation message: 'Melon successfully added to
     cart'."""
 
-    # Finish shopping cart functionality
-
-    # The logic here should be something like:
-    #
-    # - check if a "cart" exists in the session, and create one (an empty
-    #   dictionary keyed to the string "cart") if not
-    # - check if the desired melon id is the cart, and if not, put it in
-    # - increment the count for that melon id by 1
-    # - flash a success message
-    # - redirect the user to the cart page
 
     if session.get('cart'):
         if melon_id in session['cart']:
@@ -154,25 +115,10 @@ def process_login():
     dictionary, look up the user, and store them in the session.
     """
 
-    # TODO: Need to implement this!
-
-    # The logic here should be something like:
-    #
-    # - get user-provided name and password from request.form
-    # - use customers.get_by_email() to retrieve corresponding Customer
-    #   object (if any)
-    # - if a Customer with that email was found, check the provided password
-    #   against the stored one
-    # - if they match, store the user's email in the session, flash a success
-    #   message and redirect the user to the "/melons" route
-    # - if they don't, flash a failure message and redirect back to "/login"
-    # - do the same if a Customer with that email doesn't exist
-
     email = request.form['email']
     password = request.form['password']
     user = get_by_email(email)
-    # print(test.fname)
-    # print(type(test))
+ 
     if user:
         print(user.email)
         if password == user.password:
@@ -186,15 +132,13 @@ def process_login():
         flash("User doesn't exist", 'error')
         return redirect('/login')
 
-    # return email + ' ' + password
+
 
 
 @app.route("/checkout")
 def checkout():
     """Checkout customer, process payment, and ship melons."""
 
-    # For now, we'll just provide a warning. Completing this is beyond the
-    # scope of this exercise.
 
     flash("Sorry! Checkout will be implemented in a future version.")
     return redirect("/melons")
